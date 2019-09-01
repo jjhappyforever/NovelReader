@@ -20,6 +20,7 @@ import java.util.List;
 
 public class CategoryAdapter extends EasyAdapter<TxtChapter> {
     private int currentSelected = 0;
+
     @Override
     protected IViewHolder<TxtChapter> onCreateViewHolder(int viewType) {
         return new CategoryHolder();
@@ -30,14 +31,14 @@ public class CategoryAdapter extends EasyAdapter<TxtChapter> {
         View view = super.getView(position, convertView, parent);
         CategoryHolder holder = (CategoryHolder) view.getTag();
 
-        if (position == currentSelected){
+        if (position == currentSelected) {
             holder.setSelectedChapter();
         }
 
         return view;
     }
 
-    public void setChapter(int pos){
+    public void setChapter(int pos) {
         currentSelected = pos;
         notifyDataSetChanged();
     }

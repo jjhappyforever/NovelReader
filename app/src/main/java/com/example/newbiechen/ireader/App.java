@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.newbiechen.ireader.service.DownloadService;
+import com.linksure.api.ApiManager;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -19,6 +20,8 @@ public class App extends Application {
         super.onCreate();
         sInstance = this;
         startService(new Intent(getContext(), DownloadService.class));
+
+        ApiManager.getInstance().setApplicationContext(this);
 
         // 初始化内存分析工具
         if (!LeakCanary.isInAnalyzerProcess(this)) {

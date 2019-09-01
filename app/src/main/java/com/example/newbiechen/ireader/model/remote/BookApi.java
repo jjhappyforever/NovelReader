@@ -292,7 +292,7 @@ public interface BookApi {
     Single<RecommendBookListPackage> getRecommendBookListPackage(@Path("bookId") String bookId, @Query("limit") String limit);
 
     /**
-     * 书籍详情
+     * 书籍详情  585342b84ea58ff50213444b
      * @param bookId
      * @return
      */

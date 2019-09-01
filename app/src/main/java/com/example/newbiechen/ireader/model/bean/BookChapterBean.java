@@ -1,9 +1,9 @@
 package com.example.newbiechen.ireader.model.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
-import org.greenrobot.greendao.annotation.Generated;
 
 import java.io.Serializable;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 同时作为网络章节和本地章节 (没有找到更好分离两者的办法)
  */
 @Entity
-public class BookChapterBean implements Serializable{
+public class BookChapterBean implements Serializable {
     private static final long serialVersionUID = 56423411313L;
     /**
      * title : 第一章 他叫白小纯
@@ -32,6 +32,8 @@ public class BookChapterBean implements Serializable{
 
     private boolean unreadble;
 
+    public String content;
+
     //所属的书籍
     @Index
     private String bookId;
@@ -45,14 +47,15 @@ public class BookChapterBean implements Serializable{
     //在书籍文件中的终止位置
     private long end;
 
-    @Generated(hash = 1508543635)
+    @Generated(hash = 1999218350)
     public BookChapterBean(String id, String link, String title, String taskName,
-            boolean unreadble, String bookId, long start, long end) {
+            boolean unreadble, String content, String bookId, long start, long end) {
         this.id = id;
         this.link = link;
         this.title = title;
         this.taskName = taskName;
         this.unreadble = unreadble;
+        this.content = content;
         this.bookId = bookId;
         this.start = start;
         this.end = end;
@@ -142,5 +145,13 @@ public class BookChapterBean implements Serializable{
                 ", start=" + start +
                 ", end=" + end +
                 '}';
+    }
+
+    public String getContent() {
+        return this.content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

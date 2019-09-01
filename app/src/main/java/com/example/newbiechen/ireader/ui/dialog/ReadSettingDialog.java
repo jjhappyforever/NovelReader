@@ -22,13 +22,13 @@ import android.widget.TextView;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.local.ReadSettingManager;
 import com.example.newbiechen.ireader.ui.activity.MoreSettingActivity;
-import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.PageStyleAdapter;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.widget.page.PageLoader;
 import com.example.newbiechen.ireader.widget.page.PageMode;
 import com.example.newbiechen.ireader.widget.page.PageStyle;
+import com.plus.reader.ui.ReadActivity;
 
 import java.util.Arrays;
 

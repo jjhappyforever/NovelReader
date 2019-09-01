@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.widget.animation.CoverPageAnim;
 import com.example.newbiechen.ireader.widget.animation.HorizonPageAnim;
 import com.example.newbiechen.ireader.widget.animation.NonePageAnim;
@@ -317,7 +319,7 @@ public class PageView extends View {
     public void drawCurPage(boolean isUpdate) {
         if (!isPrepare) return;
 
-        if (!isUpdate){
+        if (!isUpdate) {
             if (mPageAnim instanceof ScrollPageAnim) {
                 ((ScrollPageAnim) mPageAnim).resetBitmap();
             }
@@ -347,12 +349,8 @@ public class PageView extends View {
         if (mPageLoader != null) {
             return mPageLoader;
         }
-        // 根据书籍类型，获取具体的加载器
-        if (collBook.isLocal()) {
-            mPageLoader = new LocalPageLoader(this, collBook);
-        } else {
-            mPageLoader = new NetPageLoader(this, collBook);
-        }
+        mPageLoader = new TextPageLoader(this, collBook);
+
         // 判断是否 PageView 已经初始化完成
         if (mViewWidth != 0 || mViewHeight != 0) {
             // 初始化 PageLoader 的屏幕大小

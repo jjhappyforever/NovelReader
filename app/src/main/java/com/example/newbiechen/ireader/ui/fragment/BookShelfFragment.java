@@ -21,7 +21,6 @@ import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.presenter.BookShelfPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
-import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.CollBookAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.RxUtils;
@@ -29,6 +28,7 @@ import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
+import com.plus.reader.ui.ReadActivity;
 
 import java.io.File;
 import java.util.List;
@@ -149,8 +149,7 @@ public class BookShelfFragment extends BaseMVPFragment<BookShelfContract.Present
                         File file = new File(path);
                         //判断这个本地文件是否存在
                         if (file.exists() && file.length() != 0) {
-                            ReadActivity.startActivity(getContext(),
-                                    mCollBookAdapter.getItem(pos), true);
+                            ReadActivity.startActivity(getContext(), true);
                         } else {
                             String tip = getContext().getString(R.string.nb_bookshelf_book_not_exist);
                             //提示(从目录中移除这个文件)
@@ -169,7 +168,7 @@ public class BookShelfFragment extends BaseMVPFragment<BookShelfContract.Present
                         }
                     } else {
                         ReadActivity.startActivity(getContext(),
-                                mCollBookAdapter.getItem(pos), true);
+                                true);
                     }
                 }
         );

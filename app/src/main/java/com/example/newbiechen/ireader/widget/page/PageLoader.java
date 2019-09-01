@@ -64,13 +64,13 @@ public abstract class PageLoader {
 
     private Context mContext;
     // 页面显示类
-    private PageView mPageView;
+    protected PageView mPageView;
     // 当前显示的页
-    private TxtPage mCurPage;
+    protected TxtPage mCurPage;
     // 上一章的页面列表缓存
     private List<TxtPage> mPrePageList;
     // 当前章节的页面列表
-    private List<TxtPage> mCurPageList;
+    protected List<TxtPage> mCurPageList;
     // 下一章的页面列表缓存
     private List<TxtPage> mNextPageList;
 
@@ -87,11 +87,7 @@ public abstract class PageLoader {
     // 阅读器的配置选项
     private ReadSettingManager mSettingManager;
     // 被遮盖的页，或者认为被取消显示的页
-    private TxtPage mCancelPage;
-    // 存储阅读记录类
-    private BookRecordBean mBookRecord;
-
-    private Disposable mPreLoadDisp;
+    protected TxtPage mCancelPage;
 
     /*****************params**************************/
     // 当前的状态
@@ -100,7 +96,7 @@ public abstract class PageLoader {
     protected boolean isChapterListPrepare;
 
     // 是否打开过章节
-    private boolean isChapterOpen;
+    protected boolean isChapterOpen;
     private boolean isFirstOpen = true;
     private boolean isClose;
     // 页面的翻页效果模式
@@ -155,7 +151,11 @@ public abstract class PageLoader {
         // 初始化PageView
         initPageView();
         // 初始化书籍
-        prepareBook();
+//        prepareBook();
+    }
+
+    public void setCollBookBean(CollBookBean collBook){
+        mCollBook = collBook;
     }
 
     private void initData() {
@@ -282,10 +282,7 @@ public abstract class PageLoader {
 
         // 将上一章的缓存设置为null
         mPrePageList = null;
-        // 如果当前下一章缓存正在执行，则取消
-        if (mPreLoadDisp != null) {
-            mPreLoadDisp.dispose();
-        }
+
         // 将下一章缓存设置为null
         mNextPageList = null;
 
@@ -543,41 +540,13 @@ public abstract class PageLoader {
         return mMarginHeight;
     }
 
-    /**
-     * 保存阅读记录
-     */
-    public void saveRecord() {
-
-        if (mChapterList.isEmpty()) {
-            return;
-        }
-
-        mBookRecord.setBookId(mCollBook.get_id());
-        mBookRecord.setChapter(mCurChapterPos);
-
-        if (mCurPage != null) {
-            mBookRecord.setPagePos(mCurPage.position);
-        } else {
-            mBookRecord.setPagePos(0);
-        }
-
-        //存储到数据库
-        BookRepository.getInstance()
-                .saveBookRecord(mBookRecord);
-    }
 
     /**
      * 初始化书籍
      */
     private void prepareBook() {
-        mBookRecord = BookRepository.getInstance()
-                .getBookRecord(mCollBook.get_id());
 
-        if (mBookRecord == null) {
-            mBookRecord = new BookRecordBean();
-        }
-
-        mCurChapterPos = mBookRecord.getChapter();
+        mCurChapterPos =0;
         mLastChapterPos = mCurChapterPos;
     }
 
@@ -585,47 +554,7 @@ public abstract class PageLoader {
      * 打开指定章节
      */
     public void openChapter() {
-        isFirstOpen = false;
 
-        if (!mPageView.isPrepare()) {
-            return;
-        }
-
-        // 如果章节目录没有准备好
-        if (!isChapterListPrepare) {
-            mStatus = STATUS_LOADING;
-            mPageView.drawCurPage(false);
-            return;
-        }
-
-        // 如果获取到的章节目录为空
-        if (mChapterList.isEmpty()) {
-            mStatus = STATUS_CATEGORY_EMPTY;
-            mPageView.drawCurPage(false);
-            return;
-        }
-
-        if (parseCurChapter()) {
-            // 如果章节从未打开
-            if (!isChapterOpen) {
-                int position = mBookRecord.getPagePos();
-
-                // 防止记录页的页号，大于当前最大页号
-                if (position >= mCurPageList.size()) {
-                    position = mCurPageList.size() - 1;
-                }
-                mCurPage = getCurPage(position);
-                mCancelPage = mCurPage;
-                // 切换状态
-                isChapterOpen = true;
-            } else {
-                mCurPage = getCurPage(0);
-            }
-        } else {
-            mCurPage = new TxtPage();
-        }
-
-        mPageView.drawCurPage(false);
     }
 
     public void chapterError() {
@@ -640,10 +569,6 @@ public abstract class PageLoader {
     public void closeBook() {
         isChapterListPrepare = false;
         isClose = true;
-
-        if (mPreLoadDisp != null) {
-            mPreLoadDisp.dispose();
-        }
 
         clearList(mChapterList);
         clearList(mCurPageList);
@@ -676,7 +601,7 @@ public abstract class PageLoader {
      * @param chapterPos:章节序号
      * @return
      */
-    private List<TxtPage> loadPageList(int chapterPos) throws Exception {
+    protected List<TxtPage> loadPageList(int chapterPos) throws Exception {
         // 获取章节
         TxtChapter chapter = mChapterList.get(chapterPos);
         // 判断章节是否存在
@@ -1130,34 +1055,6 @@ public abstract class PageLoader {
             return;
         }
 
-        //如果之前正在加载则取消
-        if (mPreLoadDisp != null) {
-            mPreLoadDisp.dispose();
-        }
-
-        //调用异步进行预加载加载
-        Single.create(new SingleOnSubscribe<List<TxtPage>>() {
-            @Override
-            public void subscribe(SingleEmitter<List<TxtPage>> e) throws Exception {
-                e.onSuccess(loadPageList(nextChapter));
-            }
-        }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new SingleObserver<List<TxtPage>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mPreLoadDisp = d;
-                    }
-
-                    @Override
-                    public void onSuccess(List<TxtPage> pages) {
-                        mNextPageList = pages;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //无视错误
-                    }
-                });
     }
 
     // 取消翻页
@@ -1230,7 +1127,7 @@ public abstract class PageLoader {
      * @param br：章节的文本流
      * @return
      */
-    private List<TxtPage> loadPages(TxtChapter chapter, BufferedReader br) {
+    protected List<TxtPage> loadPages(TxtChapter chapter, BufferedReader br) {
         //生成的页面
         List<TxtPage> pages = new ArrayList<>();
         //使用流的方式加载
@@ -1340,7 +1237,7 @@ public abstract class PageLoader {
     /**
      * @return:获取初始显示的页面
      */
-    private TxtPage getCurPage(int pos) {
+    protected TxtPage getCurPage(int pos) {
         if (mPageChangeListener != null) {
             mPageChangeListener.onPageChange(pos);
         }

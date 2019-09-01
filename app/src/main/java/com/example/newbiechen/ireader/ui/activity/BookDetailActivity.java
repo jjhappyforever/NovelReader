@@ -31,6 +31,7 @@ import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
+import com.plus.reader.ui.ReadActivity;
 
 import java.util.List;
 
@@ -185,8 +186,7 @@ public class BookDetailActivity extends BaseMVPActivity<BookDetailContract.Prese
 
         mTvRead.setOnClickListener(
                 (v) -> startActivityForResult(new Intent(this, ReadActivity.class)
-                        .putExtra(ReadActivity.EXTRA_IS_COLLECTED, isCollected)
-                        .putExtra(ReadActivity.EXTRA_COLL_BOOK, mCollBookBean), REQUEST_READ)
+                        , REQUEST_READ)
         );
 
 
